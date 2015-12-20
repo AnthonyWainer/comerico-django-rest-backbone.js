@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.decorators import link, detail_route
+from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from .models import Restaurant, Category, City, Payment, Establishment, Tip
@@ -7,11 +7,10 @@ from .serializers import RestaurantSerializer, CategorySerializer, CitySerialize
 
 class RestaurantViewSet(viewsets.ReadOnlyModelViewSet): #para poder hacer post
 
-	model = Restaurant
+	queryset = Restaurant.objects.all()
 	serializer_class = RestaurantSerializer
 
 	@detail_route(methods=['get', 'post'])
-	@link()
 	def tips(self, request, pk=None):
 		tips = Tip.objects.filter(restaurant__pk = pk)
 		serializer = TipSerializer(tips, many=True)
@@ -20,10 +19,9 @@ class RestaurantViewSet(viewsets.ReadOnlyModelViewSet): #para poder hacer post
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
-	model = Category
+	queryset = Category.objects.all()
 	serializer_class = CategorySerializer
 
-	@link()
 	def restaurants(self, request, pk=None):
 		establishments = Establishment.objects.filter(restaurant__category__pk = pk).distinct('restaurant__name')
 		restaurants = [establishment.restaurant  for establishment in establishments]		
@@ -32,10 +30,9 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CityViewSet(viewsets.ReadOnlyModelViewSet):
 
-	model = City
+	queryset = City.objects.all()
 	serializer_class = CitySerializer
 
-	@link()
 	def restaurants(self, request, pk=None):
 		establishments = Establishment.objects.filter(city__pk = pk).distinct('restaurant__name')
 		restaurants = [establishment.restaurant  for establishment in establishments]		
@@ -44,10 +41,9 @@ class CityViewSet(viewsets.ReadOnlyModelViewSet):
 
 class PaymentViewSet(viewsets.ReadOnlyModelViewSet):
 
-	model = Payment
+	queryset = Payment.objects.all()
 	serializer_class = PaymentSerializer
 
-	@link()
 	def restaurants(self, request, pk=None):
 		establishments = Establishment.objects.filter(restaurant__payment__pk = pk).distinct('restaurant__name')
 		restaurants = [establishment.restaurant  for establishment in establishments]		
